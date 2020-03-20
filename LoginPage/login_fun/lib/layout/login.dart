@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/back/login_background.dart';
 import 'package:loginpage/data/join_or_login.dart';
+import 'package:loginpage/layout/main_page.dart';
 import 'package:provider/provider.dart';
 
 class AuthPage extends StatelessWidget {
@@ -167,6 +169,38 @@ class AuthPage extends StatelessWidget {
           ),
         ),
       );
+
+  void _register(BuildContext context) async {
+    final AuthResult result = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _idController.text, password: _pwController.text);
+    final FirebaseUser user = result.user;
+
+    if (user == null) {
+      final snacBar = SnackBar(
+        content: Text("Please try again please."),
+      );
+      Scaffold.of(context).showSnackBar(snacBar);
+    }
+
+    //화면이동 시키기
+//    Navigator.push(context,
+//        MaterialPageRoute(builder: (context) => MainPage(email: user.email)));
+  }
+
+  void _login(BuildContext context) async {
+    final AuthResult result = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _idController.text, password: _pwController.text);
+    final FirebaseUser user = result.user;
+
+    if (user == null) {
+      final snacBar = SnackBar(
+        content: Text("Please try again please."),
+      );
+      Scaffold.of(context).showSnackBar(snacBar);
+    }
+  }
 
   //로고이밎 넣는곳으로써,, 파라미터 가져올게 없으면, Get으로 표현해서 마치 객체 위젯처럼 쓸수도 있다.
   Widget get _logoImg => Expanded(
