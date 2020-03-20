@@ -45,13 +45,15 @@ class AuthPage extends StatelessWidget {
                 Container(
                   height: screenSize.height * 0.1,
                 ), //텍스트와 객체들 사이 공간
-                GestureDetector(
-                    onTap: () {
-                      JoinOrLogin joinOrLogin =
-                          Provider.of<JoinOrLogin>(context);
-                      joinOrLogin.toggle();
-                    },
-                    child: Text("Dont Have Account? Create One")), // 계정 생성 공간
+                Consumer<JoinOrLogin>(builder: (context, JoinOrLoginValue, child) =>GestureDetector(
+                        onTap: () {
+                          JoinOrLogin joinOrLogin =
+                          Provider.of<JoinOrLogin>(context, listen: false);
+                          joinOrLogin.toggle();
+                        },
+                        child: Text("Dont Have Account? Create One")), // 계정 생성 공간
+                ),
+
                 Container(
                   height: screenSize.height * 0.05,
                   width: 100,
