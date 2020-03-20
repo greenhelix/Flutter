@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loginpage/back/login_background.dart';
+import 'package:loginpage/data/join_or_login.dart';
+import 'package:provider/provider.dart';
 
 class AuthPage extends StatelessWidget {
   // flutter에서 key는 아이디라고 보면된다.
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   //controller
-  final TextEditingController idController = TextEditingController();
-  final TextEditingController pwController = TextEditingController();
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +22,12 @@ class AuthPage extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            Container(
-              color: Colors.black,
+            CustomPaint(
+              //반드시 화면사이즈를 지정해서 끌어줘야 한다. 안그러면 구동이 안됨
+              size: screenSize,
+              painter: LoginBackground(
+                  // JoinOrLogin  의 isJoin boolean 값을 가져온다는 의미이다.
+                  isJoin: Provider.of<JoinOrLogin>(context).isJoin),
             ), //배경부분
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,7 +45,13 @@ class AuthPage extends StatelessWidget {
                 Container(
                   height: screenSize.height * 0.1,
                 ), //텍스트와 객체들 사이 공간
-                Text("Dont Have Account? Create One"), // 계정 생성 공간
+                GestureDetector(
+                    onTap: () {
+                      JoinOrLogin joinOrLogin =
+                          Provider.of<JoinOrLogin>(context);
+                      joinOrLogin.toggle();
+                    },
+                    child: Text("Dont Have Account? Create One")), // 계정 생성 공간
                 Container(
                   height: screenSize.height * 0.05,
                   width: 100,
@@ -67,12 +80,12 @@ class AuthPage extends StatelessWidget {
               const EdgeInsets.only(left: 12, top: 12, right: 12, bottom: 50),
           child: Form(
               // 아이디 키 값을 주워 찾기 쉽게해준다.웬만하면 데이터가 있는 부분인듯
-              key: formKey,
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   TextFormField(
-                    controller: idController,
+                    controller: _idController,
                     decoration: InputDecoration(
                         icon: Icon(Icons.account_circle), labelText: "이메일 주소"),
                     validator: (String emailID) {
@@ -85,7 +98,7 @@ class AuthPage extends StatelessWidget {
                   // obscureText => 문자를 점점으로 안보이게 해준다.
                   TextFormField(
                     obscureText: true,
-                    controller: pwController,
+                    controller: _pwController,
                     decoration: InputDecoration(
                         icon: Icon(Icons.vpn_key), labelText: "비밀번호"),
                     validator: (String pw) {
@@ -95,7 +108,10 @@ class AuthPage extends StatelessWidget {
                       return null;
                     },
                   ),
-                  Text("Forgot Password?")
+                  Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: Colors.blueAccent),
+                  )
                 ],
               )),
         ),
@@ -121,8 +137,8 @@ class AuthPage extends StatelessWidget {
             color: Colors.deepPurple,
             onPressed: () {
               // formkey 부분아이디를 찾아서 그곳에 있는 validator에 해당하는 값들이 있는지 확인
-              if (formKey.currentState.validate())
-                print("맞습니다. " + idController.text.toString());
+              if (_formKey.currentState.validate())
+                print("맞습니다. " + _idController.text.toString());
             },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
