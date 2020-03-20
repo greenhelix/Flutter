@@ -45,13 +45,23 @@ class AuthPage extends StatelessWidget {
                 Container(
                   height: screenSize.height * 0.1,
                 ), //텍스트와 객체들 사이 공간
-                Consumer<JoinOrLogin>(builder: (context, JoinOrLoginValue, child) =>GestureDetector(
-                        onTap: () {
-                          JoinOrLogin joinOrLogin =
-                          Provider.of<JoinOrLogin>(context, listen: false);
-                          joinOrLogin.toggle();
-                        },
-                        child: Text("Dont Have Account? Create One")), // 계정 생성 공간
+                //컨슈머를 통해서 builder를 통해  값을 가져오고, 이를 편하게 사용한다. 원하는 값의 이름은 원하는
+                //이름으로 설정해서 쓸 수 있다. 각 조건에 따라 조건식을 걸어 둘수도 있다.
+                Consumer<JoinOrLogin>(
+                  builder: (context, JoinOrLoginValue, child) =>
+                      GestureDetector(
+                          onTap: () {
+                            JoinOrLoginValue.toggle();
+                          },
+                          child: Text(
+                            JoinOrLoginValue.isJoin
+                                ? "Already Have an Account? Sign In"
+                                : "Dont Have Account? Create One",
+                            style: TextStyle(
+                                color: JoinOrLoginValue.isJoin
+                                    ? Colors.deepOrangeAccent
+                                    : Colors.deepPurpleAccent),
+                          )), // 계정 생성 공간
                 ),
 
                 Container(
@@ -110,9 +120,17 @@ class AuthPage extends StatelessWidget {
                       return null;
                     },
                   ),
-                  Text(
-                    "Forgot Password?",
-                    style: TextStyle(color: Colors.blueAccent),
+                  Consumer<JoinOrLogin>(
+                    builder: (context, value, child) => Opacity(
+//                    opacity: Provider.of<JoinOrLogin>(context).isJoin, 이렇게 쓰면, context가 없는 메서드라 적용이 안됨.
+                      // 그래서 consumer를 사용한다.
+                      opacity: value.isJoin ? 0 : 1,
+                      // opacity 0과 1로 설정해서 보였다(1)/ 안보였다(0) 하는 것임.
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
                   )
                 ],
               )),
@@ -128,22 +146,24 @@ class AuthPage extends StatelessWidget {
         bottom: 0,
         child: SizedBox(
           height: 50,
-          child: RaisedButton(
-            child: Text(
-              "로그인",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
+          child: Consumer<JoinOrLogin>(
+            builder: (context, vlaue, child) => RaisedButton(
+              child: Text(
+                vlaue.isJoin ? "가 입" : "로 그 인",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
               ),
+              color: vlaue.isJoin ? Colors.deepOrangeAccent : Colors.deepPurple,
+              onPressed: () {
+                // formkey 부분아이디를 찾아서 그곳에 있는 validator에 해당하는 값들이 있는지 확인
+                if (_formKey.currentState.validate())
+                  print("맞습니다. " + _idController.text.toString());
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
             ),
-            color: Colors.deepPurple,
-            onPressed: () {
-              // formkey 부분아이디를 찾아서 그곳에 있는 validator에 해당하는 값들이 있는지 확인
-              if (_formKey.currentState.validate())
-                print("맞습니다. " + _idController.text.toString());
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       );
@@ -155,10 +175,13 @@ class AuthPage extends StatelessWidget {
           child: FittedBox(
             child: CircleAvatar(
               //network를 통해서 이미지를 가져온다. assets에 넣어서 해도되는데, 그건 좀 찾아봐야할듯
-              backgroundImage: NetworkImage(
-                  "https://i.pinimg.com/originals/7e/f8/c4/7ef8c486ba15bdd66c1dbc4f2b48465c.gif"),
+              backgroundImage: AssetImage("assets/walkincute.gif"),
             ),
           ),
         ),
       );
 }
+
+// 네트워크를 통한 이미지 올릴 때.
+// NetworkImage(
+//                  "https://i.pinimg.com/originals/7e/f8/c4/7ef8c486ba15bdd66c1dbc4f2b48465c.gif")
