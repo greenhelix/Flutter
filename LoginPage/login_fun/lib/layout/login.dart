@@ -50,20 +50,19 @@ class AuthPage extends StatelessWidget {
                 //컨슈머를 통해서 builder를 통해  값을 가져오고, 이를 편하게 사용한다. 원하는 값의 이름은 원하는
                 //이름으로 설정해서 쓸 수 있다. 각 조건에 따라 조건식을 걸어 둘수도 있다.
                 Consumer<JoinOrLogin>(
-                  builder: (context, JoinOrLoginValue, child) =>
-                      GestureDetector(
-                          onTap: () {
-                            JoinOrLoginValue.toggle();
-                          },
-                          child: Text(
-                            JoinOrLoginValue.isJoin
-                                ? "Already Have an Account? Sign In"
-                                : "Dont Have Account? Create One",
-                            style: TextStyle(
-                                color: JoinOrLoginValue.isJoin
-                                    ? Colors.deepOrangeAccent
-                                    : Colors.deepPurpleAccent),
-                          )), // 계정 생성 공간
+                  builder: (context, value, child) => GestureDetector(
+                      onTap: () {
+                        value.toggle();
+                      },
+                      child: Text(
+                        value.isJoin
+                            ? "Already Have an Account? Sign In"
+                            : "Dont Have Account? Create One",
+                        style: TextStyle(
+                            color: value.isJoin
+                                ? Colors.deepOrangeAccent
+                                : Colors.deepPurpleAccent),
+                      )), // 계정 생성 공간
                 ),
 
                 Container(
