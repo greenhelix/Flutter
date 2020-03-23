@@ -2,7 +2,7 @@
 
 Flutter Project Zip
 
-1. 플러터 설정
+## 1. 플러터 설정
 
 - 플러터는 안드로이드나 vscode 툴에서 사용이 가능하다. (둘중 하나 있어야함)
 - 각 개발 툴에서 플러그인 - flutter / dart 를 다운받는다.
@@ -24,3 +24,7 @@ Flutter Project Zip
   - flutter project 상단 최고 폴더를 우클리하여 git > +Add 를 클릭
   - 이렇게 하면 빨간 글씨 부분들이 없어진다.
   - 이후에는 commit버튼을 하나 눌러 확인해본다. :white_check_mark: 누르기
+  
+  
+## 2. 오류 / 버그 
+[Gradle이 문제다?](https://greenhelix.tistory.com/81?category=821898)
