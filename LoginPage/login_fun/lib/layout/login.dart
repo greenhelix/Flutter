@@ -148,15 +148,15 @@ class AuthPage extends StatelessWidget {
         child: SizedBox(
           height: 50,
           child: Consumer<JoinOrLogin>(
-            builder: (context, vlaue, child) => RaisedButton(
+            builder: (context, value, child) => RaisedButton(
               child: Text(
-                vlaue.isJoin ? "가 입" : "로 그 인",
+                value.isJoin ? "가 입" : "로 그 인",
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.white,
                 ),
               ),
-              color: vlaue.isJoin ? Colors.deepOrangeAccent : Colors.deepPurple,
+              color: value.isJoin ? Colors.deepOrangeAccent : Colors.deepPurple,
               onPressed: () {
                 // formkey 부분아이디를 찾아서 그곳에 있는 validator에 해당하는 값들이 있는지 확인
                 if (_formKey.currentState.validate())
@@ -164,6 +164,18 @@ class AuthPage extends StatelessWidget {
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14)),
+            ),
+          ),
+        ),
+      );
+
+  //로고이미지 넣는곳으로써,, 파라미터 가져올게 없으면, Get으로 표현해서 마치 객체 위젯처럼 쓸수도 있다.
+  Widget get _logoImg => Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 70, left: 70, right: 70),
+          child: FittedBox(
+            child: CircleAvatar(
+              backgroundImage: AssetImage("assets/walkincute.gif"),
             ),
           ),
         ),
@@ -200,19 +212,6 @@ class AuthPage extends StatelessWidget {
       Scaffold.of(context).showSnackBar(snacBar);
     }
   }
-
-  //로고이밎 넣는곳으로써,, 파라미터 가져올게 없으면, Get으로 표현해서 마치 객체 위젯처럼 쓸수도 있다.
-  Widget get _logoImg => Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 70, left: 70, right: 70),
-          child: FittedBox(
-            child: CircleAvatar(
-              //network를 통해서 이미지를 가져온다. assets에 넣어서 해도되는데, 그건 좀 찾아봐야할듯
-              backgroundImage: AssetImage("assets/walkincute.gif"),
-            ),
-          ),
-        ),
-      );
 }
 
 // 네트워크를 통한 이미지 올릴 때.
