@@ -157,13 +157,13 @@ class AuthPage extends StatelessWidget {
                 ),
               ),
               color: value.isJoin ? Colors.deepOrangeAccent : Colors.deepPurple,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
               onPressed: () {
                 // formkey 부분아이디를 찾아서 그곳에 있는 validator에 해당하는 값들이 있는지 확인
                 if (_formKey.currentState.validate())
-                  print("맞습니다. " + _idController.text.toString());
+                  value.isJoin ? _register(context) : _login(context);
               },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
             ),
           ),
         ),
@@ -188,6 +188,7 @@ class AuthPage extends StatelessWidget {
     final FirebaseUser user = result.user;
 
     if (user == null) {
+      // 메세지 올려주는 기능 sanckBar
       final snacBar = SnackBar(
         content: Text("Please try again please."),
       );

@@ -13,11 +13,13 @@ class MainPage extends StatelessWidget {
         title: Text(email),
       ),
       body: Container(
-          child: FlatButton(
-        onPressed: () {
-          FirebaseAuth.instance.signOut();
-        },
-        child: Text("Logout"),
+          child: Center(
+        child: FlatButton(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+          },
+          child: Text("Logout"),
+        ),
       )),
     );
   }
