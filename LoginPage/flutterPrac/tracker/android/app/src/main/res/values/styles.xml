@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
-        <!-- Show a splash screen on the activity. Automatically removed when
-             Flutter draws its first frame -->
+
+        <!--시작화면을 draw에 리소스들을 정의 및 넣어두고, style 로 지정했다.-->
         <item name="android:windowBackground">@drawable/launch_background</item>
+
     </style>
 </resources>

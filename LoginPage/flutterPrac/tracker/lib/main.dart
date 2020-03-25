@@ -1,42 +1,29 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Tracker',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Map 홈 Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -44,68 +31,168 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  StreamSubscription _locationSubscription;
+  Location _locationTracker = Location();
+  Marker marker;
+  Polyline polyline;
+  Circle circle;
+  GoogleMapController _controller;
+  List<LatLng> lineList = [];
+  List<LatLng> line = [];
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  //홈화면 디자인 및 구성
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: initialLocation,
+        markers: Set.of((marker != null) ? [marker] : []),
+        circles: Set.of((circle != null) ? [circle] : []),
+        polylines: Set.of((polyline != null) ? [polyline] : []),
+        onMapCreated: (GoogleMapController controller) {
+          _controller = controller;
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.location_searching),
+          onPressed: () {
+            getCurrentLocation();
+          }),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Container(
+          height: 80.0,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  //마커랑 주변 이미지 옵션들
+  void updateMarkerAndCircle(LocationData newLocalData, Uint8List imageData) {
+    LatLng latlng = LatLng(newLocalData.latitude, newLocalData.longitude);
+
+    this.setState(() {
+      marker = Marker(
+          markerId: MarkerId('me'),
+          position: latlng,
+          rotation: newLocalData.heading,
+          draggable: false,
+          zIndex: 2,
+          flat: true,
+          anchor: Offset(0.5, 0.5),
+          icon: BitmapDescriptor.fromBytes(imageData));
+      circle = Circle(
+          circleId: CircleId("car"),
+          radius: newLocalData.accuracy,
+          zIndex: 1,
+          strokeColor: Colors.blue,
+          center: latlng,
+          fillColor: Colors.blue.withAlpha(20));
     });
   }
 
+  void updatePolyline(LocationData data) {
+    if (line != null) {
+      line.clear();
+    }
+    //시작점
+    LatLng starting = LatLng(data.latitude, data.longitude);
+
+    //시작점을 추가한다.
+    print("이게 시작점 ? " + starting.toString());
+    lineList.add(starting);
+
+//    print("<>>LINE>>>>?" + line.toString());
+
+    if (lineList.length >= 2) {
+      for (int i = 0; i < lineList.length - 1; i++) {
+        if (lineList[i] == lineList[i + 1]) {
+          lineList.removeAt(i);
+          print("삭제함>>>" + lineList.toString());
+        } else {
+          line.add(lineList[i]);
+          line.add(lineList[i + 1]);
+        }
+        if (line.length == 2 && line[0] != line[1]) {
+          print("들어오긴했다." + line.toString());
+
+          this.setState(() {
+            polyline = Polyline(
+              polylineId: PolylineId("road"),
+              points: line,
+              color: Colors.deepPurpleAccent,
+              width: 10,
+            );
+          });
+        }
+      }
+    }
+
+    print("이건 테스트야. LINE__CLEAR??" + line.toString());
+    print("이건 테스트야. 라인들비교" + lineList.toString());
+  }
+
+  //최초위치? 및 카메라 위치
+  static final CameraPosition initialLocation = CameraPosition(
+    target: LatLng(37.656082000, 127.117828000),
+    zoom: 10.0,
+  );
+
+  //내 마커 모양 가져오는 메서드
+  Future<Uint8List> getMarker() async {
+    ByteData byteData =
+        await DefaultAssetBundle.of(context).load("assets/marker.png");
+    return byteData.buffer.asUint8List();
+  }
+
+  //위치 표현 과 이미지 옵션들을 연결해준다.
+  void getCurrentLocation() async {
+    try {
+      Uint8List imageData = await getMarker();
+      //getLocation()으로 위치 가져온다.
+      var location = await _locationTracker.getLocation();
+
+      // 그 위치 정보를 드래로 그려준다.
+      updateMarkerAndCircle(location, imageData);
+      updatePolyline(location);
+
+      if (_locationSubscription != null) {
+        _locationSubscription.cancel();
+      }
+/*-------------------------------------------------------*/
+
+      // 위치정보가 변경되었다면, 위치를 가져오면서, 카메라 위치도 바꾸면서, 그림도 그대로 따라 그려준다.
+      _locationSubscription =
+          _locationTracker.onLocationChanged().listen((newLocalData) {
+        // if (_controller != null) {
+        _controller.animateCamera(CameraUpdate.newCameraPosition(
+            new CameraPosition(
+                target: LatLng(newLocalData.latitude, newLocalData.longitude),
+                tilt: 0,
+                zoom: 15.0,
+                bearing: 0)));
+
+        /*폴리라인 추가하는 부분인데. 확인 필요*/
+        updateMarkerAndCircle(newLocalData, imageData);
+        updatePolyline(newLocalData);
+      });
+    } on PlatformException catch (e) {
+      if (e.code == "PERMISSION DENIED") {
+        debugPrint("PERMISSION DENIED CHECK PLEASE");
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+  void dispose() {
+    if (_locationSubscription != null) {
+      _locationSubscription.cancel();
+    }
+    super.dispose();
   }
 }
