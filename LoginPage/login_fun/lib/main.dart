@@ -17,7 +17,7 @@ class LoginApp extends StatelessWidget {
   }
 }
 
-//첫 페이시 로고 보여주는 것을 splash라고 함
+
 class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,11 @@ class Splash extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (context, snapshot) {
           if (snapshot.data == null) {
+              // 로그인 정보가 없다면, 로그인/가입 페이지로 이동
             return ChangeNotifierProvider<JoinOrLogin>.value(
                 value: JoinOrLogin(), child: AuthPage());
           } else {
+              // 로그인 시 이동하느 화면
             return MainPage(email: snapshot.data.email);
           }
         });
