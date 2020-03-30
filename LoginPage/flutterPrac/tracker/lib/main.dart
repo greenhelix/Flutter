@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracker/login/login_layout.dart';
@@ -23,16 +24,16 @@ class EccentricApp extends StatelessWidget {
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(builder: (context, snapshot) {
-      if (snapshot.data == null) {
-        return ChangeNotifierProvider<CheckLogin>.value(
-            value: CheckLogin(), child: AuthPage());
-      } else {
-        return MyHomePage(
-          title: '지도화면',
-        );
-      }
-    });
+    return StreamBuilder(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return ChangeNotifierProvider<CheckLogin>.value(
+                value: CheckLogin(), child: AuthPage());
+          } else {
+            return MyHomePage(email: snapshot.data.email, title: "지도화면");
+          }
+        });
   }
 }
 

@@ -1,19 +1,24 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.email}) : super(key: key);
   final String title;
+  final String email;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(this.email);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  _MyHomePageState(this.email);
+  String email;
+
   StreamSubscription _locationSubscription;
   Location _locationTracker = Location();
   Marker marker;
@@ -26,7 +31,76 @@ class _MyHomePageState extends State<MyHomePage> {
   //홈화면 디자인 및 구성
   @override
   Widget build(BuildContext context) {
+    print("로그인되었습니다.");
     return Scaffold(
+      endDrawer: Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Drawer(
+            child: ListView(
+          children: <Widget>[
+            Container(
+                height: 55,
+                color: Colors.cyanAccent,
+                child: Row(
+                  children: <Widget>[
+                    DrawerHeader(
+                      padding: EdgeInsets.only(left: 10),
+                      margin: EdgeInsets.only(top: 5),
+                      child: Row(
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundColor: Colors.yellow,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.04,
+                          ),
+                          Text(email.substring(0, 5)),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                          ButtonTheme(
+                            buttonColor: Colors.white70,
+                            minWidth: 60,
+                            height: 30,
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(20.0),
+                              ),
+                              child: new Text(
+                                "로그아웃",
+                                style: TextStyle(fontSize: 10),
+                              ),
+                              onPressed: () {
+                                FirebaseAuth.instance.signOut();
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
+            ListTile(
+              title: Text('사 용 자 정 보'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('설 정'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text('환경 설정'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        )),
+      ),
       appBar: AppBar(
         title: Text(widget.title),
       ),
@@ -48,12 +122,28 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
         child: Container(
-          height: 80.0,
-        ),
+            height: 80.0,
+            child: Center(
+              child: FlatButton(
+                onPressed: () {},
+                child: Text("로그아웃"),
+              ),
+            )),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
+
+  Widget get _myImg => Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+          child: FittedBox(
+            child: CircleAvatar(
+              backgroundColor: Colors.black,
+            ),
+          ),
+        ),
+      );
 
   //마커랑 주변 이미지 옵션들
   void updateMarkerAndCircle(LocationData newLocalData, Uint8List imageData) {
