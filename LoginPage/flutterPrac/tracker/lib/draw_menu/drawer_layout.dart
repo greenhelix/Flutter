@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/map/floating_btn_control.dart';
 import 'package:tracker/map/track_map_layout.dart';
 
 class DrawerLayout extends StatelessWidget {
@@ -63,9 +64,12 @@ class DrawerLayout extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('설 정'),
+              title: Text('테스트'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FloatingController()));
               },
             ),
             ListTile(

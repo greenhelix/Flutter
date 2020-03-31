@@ -14,7 +14,7 @@ class EccentricApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EccentricPath',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.yellow,
       ),
       home: Login(),
     );
