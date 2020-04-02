@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/data/line_data.dart';
 import 'package:tracker/map/floating_btn_control.dart';
-import 'package:tracker/map/track_map_layout.dart';
 
 class DrawerLayout extends StatelessWidget {
   DrawerLayout(this.email);
@@ -64,12 +64,10 @@ class DrawerLayout extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('테스트'),
+              title: Text('내 경 로'),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FloatingController()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LineDataShow()));
               },
             ),
             ListTile(

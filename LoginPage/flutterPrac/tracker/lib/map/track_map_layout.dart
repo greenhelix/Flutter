@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:tracker/data/line_data.dart';
 import 'package:tracker/draw_menu/drawer_layout.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -20,7 +21,6 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   _MyHomePageState(this.email);
   String email;
-
   StreamSubscription _locationSubscription;
   Location _myLocation = Location();
   Marker marker;
@@ -29,10 +29,11 @@ class _MyHomePageState extends State<MyHomePage>
   GoogleMapController _controller;
   List<LatLng> lineList = [];
   List<LatLng> line = [];
-  bool menuOpen, tStart = false;
-  AnimationController _animationController, _animationTrackerController;
+  bool menuOpen = false;
+  bool sTrack = false;
+  AnimationController _animationController;
   Animation<Color> _buttonColor;
-  Animation<double> _animateIcon, _animatePlay;
+  Animation<double> _animateIcon;
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOutCirc;
   double _fabHeight = 56.0;
@@ -42,11 +43,13 @@ class _MyHomePageState extends State<MyHomePage>
     return degree / unitRadian;
   }
 
+  final mapScaffoldKey = GlobalKey<ScaffoldState>();
   //홈화면 디자인 및 구성
   @override
   Widget build(BuildContext context) {
     Size drawer = MediaQuery.of(context).size;
     return Scaffold(
+      key: mapScaffoldKey,
       endDrawer: DrawerLayout(email),
       appBar: AppBar(
         title: Text(widget.title),
@@ -226,9 +229,7 @@ class _MyHomePageState extends State<MyHomePage>
     if (_animationController != null) {
       _animationController.dispose();
     }
-    if (_animationTrackerController != null) {
-      _animationTrackerController.dispose();
-    }
+
     super.dispose();
   }
 
@@ -239,16 +240,9 @@ class _MyHomePageState extends State<MyHomePage>
           ..addListener(() {
             setState(() {});
           });
-    _animationTrackerController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100))
-          ..addListener(() {
-            setState(() {});
-          });
 
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-    _animatePlay = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(_animationTrackerController);
 
     _buttonColor = ColorTween(begin: Colors.deepPurple, end: Colors.transparent)
         .animate(CurvedAnimation(
@@ -264,25 +258,14 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   menuAnimate() {
-    if (!menuOpen) {
+    if (menuOpen == true) {
       print("menu open");
       _animationController.forward();
     } else {
       print("menu close");
       _animationController.reverse();
-      lineList.clear();
-      print("...폴리라인 리셋");
     }
     menuOpen = !menuOpen;
-  }
-
-  trackAnimate() {
-    if (!tStart) {
-      startTracker();
-    } else {
-      getCurrentLocation();
-    }
-    tStart = !tStart;
   }
 
   /*여기서부터는 내가 원하는 플로팅 메뉴아이템들 리스트이다.*/
@@ -295,21 +278,6 @@ class _MyHomePageState extends State<MyHomePage>
         child: AnimatedIcon(
           icon: AnimatedIcons.menu_close,
           progress: _animateIcon,
-        ),
-      ),
-    );
-  }
-
-  Widget trackStart() {
-    return Container(
-      child: FloatingActionButton(
-        heroTag: "start",
-        onPressed: trackAnimate,
-        tooltip: 'TrackStart',
-        backgroundColor: Colors.lightBlueAccent,
-        child: AnimatedIcon(
-          icon: AnimatedIcons.pause_play,
-          progress: _animatePlay,
         ),
       ),
     );
@@ -330,14 +298,33 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  //Icon(Icons.directions_walk)
+  Widget trackStart() {
+    return Container(
+      child: FloatingActionButton(
+        heroTag: "start",
+        onPressed: () {
+          if (sTrack) {
+            startTracker();
+          } else {
+            line.clear();
+            lineList.clear();
+            getCurrentLocation();
+          }
+          sTrack = !sTrack;
+        },
+        tooltip: 'TrackStart',
+        backgroundColor: Colors.lightBlueAccent,
+        child: sTrack ? Icon(Icons.play_arrow) : Icon(Icons.pause),
+      ),
+    );
+  }
 
   Widget trackSave() {
     return Container(
       child: FloatingActionButton(
         heroTag: "save",
         onPressed: () {
-          _animationController.reverse();
+          showAlert(context);
         },
         tooltip: 'TrackSave',
         backgroundColor: Colors.orangeAccent,
@@ -346,5 +333,44 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       ),
     );
+  }
+
+  void showAlert(BuildContext context) async {
+    String result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("저장하시겠습니까?"),
+            content: Text(lineList.toString()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('네', style: TextStyle(color: Colors.black)),
+                onPressed: () {
+                  Navigator.pop(context, '저장되었습니다.');
+                },
+              ),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context, "취소하셨습니다.");
+                  },
+                  child: Text('아니요', style: TextStyle(color: Colors.black)))
+            ],
+          );
+        });
+    mapScaffoldKey.currentState
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(
+          '$result',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.yellowAccent,
+        action: SnackBarAction(
+          label: "완료",
+          onPressed: () {},
+          textColor: Colors.black,
+        ),
+      ));
   }
 }
