@@ -22,17 +22,17 @@ class _MyHomePageState extends State<MyHomePage>
   String email;
 
   StreamSubscription _locationSubscription;
-  Location _locationTracker = Location();
+  Location _myLocation = Location();
   Marker marker;
   Polyline polyline;
   Circle circle;
   GoogleMapController _controller;
   List<LatLng> lineList = [];
   List<LatLng> line = [];
-  bool isOpened = false;
-  AnimationController _animationController;
+  bool menuOpen, tStart = false;
+  AnimationController _animationController, _animationTrackerController;
   Animation<Color> _buttonColor;
-  Animation<double> _animateIcon;
+  Animation<double> _animateIcon, _animatePlay;
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOutCirc;
   double _fabHeight = 56.0;
@@ -169,35 +169,51 @@ class _MyHomePageState extends State<MyHomePage>
     try {
       Uint8List imageData = await getMarker();
       //getLocation()으로 위치 가져온다.
-      var location = await _locationTracker.getLocation();
+      var location = await _myLocation.getLocation();
 
-      // 그 위치 정보를 드래로 그려준다.
+      _controller.animateCamera(CameraUpdate.newCameraPosition(
+          new CameraPosition(
+              target: LatLng(location.latitude, location.longitude),
+              zoom: 15.0)));
       updateMarkerAndCircle(location, imageData);
-      updatePolyline(location);
 
       if (_locationSubscription != null) {
         _locationSubscription.cancel();
       }
-/*-------------------------------------------------------*/
+      /*-------------------------------------------------------*/
 
-      // 위치정보가 변경되었다면, 위치를 가져오면서, 카메라 위치도 바꾸면서, 그림도 그대로 따라 그려준다.
+    } on PlatformException catch (e) {
+      if (e.code == "PERMISSION DENIED") {
+        debugPrint("PERMISSION DENIED CHECK PLEASE");
+      }
+    }
+  }
+
+  void startTracker() async {
+    try {
+      Uint8List imageData = await getMarker();
+      var location = await _myLocation.getLocation();
+      updatePolyline(location);
+      updateMarkerAndCircle(location, imageData);
+
+      if (_locationSubscription != null) {
+        _locationSubscription.cancel();
+      }
+
       _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocalData) {
-        // if (_controller != null) {
+          _myLocation.onLocationChanged().listen((newLocalData) {
         _controller.animateCamera(CameraUpdate.newCameraPosition(
             new CameraPosition(
                 target: LatLng(newLocalData.latitude, newLocalData.longitude),
                 tilt: 0,
                 zoom: 15.0,
                 bearing: 0)));
-
-        /*폴리라인 추가하는 부분인데. 확인 필요*/
         updateMarkerAndCircle(newLocalData, imageData);
         updatePolyline(newLocalData);
       });
     } on PlatformException catch (e) {
       if (e.code == "PERMISSION DENIED") {
-        debugPrint("PERMISSION DENIED CHECK PLEASE");
+        debugPrint("트랙커 시작부분이 이상합니다. startTracker() error");
       }
     }
   }
@@ -210,6 +226,9 @@ class _MyHomePageState extends State<MyHomePage>
     if (_animationController != null) {
       _animationController.dispose();
     }
+    if (_animationTrackerController != null) {
+      _animationTrackerController.dispose();
+    }
     super.dispose();
   }
 
@@ -220,9 +239,16 @@ class _MyHomePageState extends State<MyHomePage>
           ..addListener(() {
             setState(() {});
           });
+    _animationTrackerController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100))
+          ..addListener(() {
+            setState(() {});
+          });
 
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _animatePlay = Tween<double>(begin: 0.0, end: 1.0)
+        .animate(_animationTrackerController);
 
     _buttonColor = ColorTween(begin: Colors.deepPurple, end: Colors.transparent)
         .animate(CurvedAnimation(
@@ -237,14 +263,26 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
   }
 
-  animate() {
-    if (!isOpened) {
+  menuAnimate() {
+    if (!menuOpen) {
+      print("menu open");
       _animationController.forward();
     } else {
-      print("close");
+      print("menu close");
       _animationController.reverse();
+      lineList.clear();
+      print("...폴리라인 리셋");
     }
-    isOpened = !isOpened;
+    menuOpen = !menuOpen;
+  }
+
+  trackAnimate() {
+    if (!tStart) {
+      startTracker();
+    } else {
+      getCurrentLocation();
+    }
+    tStart = !tStart;
   }
 
   /*여기서부터는 내가 원하는 플로팅 메뉴아이템들 리스트이다.*/
@@ -252,11 +290,26 @@ class _MyHomePageState extends State<MyHomePage>
     return Container(
       child: FloatingActionButton(
         heroTag: "menu",
-        onPressed: animate,
         tooltip: 'MenuToggle',
+        onPressed: menuAnimate,
         child: AnimatedIcon(
           icon: AnimatedIcons.menu_close,
           progress: _animateIcon,
+        ),
+      ),
+    );
+  }
+
+  Widget trackStart() {
+    return Container(
+      child: FloatingActionButton(
+        heroTag: "start",
+        onPressed: trackAnimate,
+        tooltip: 'TrackStart',
+        backgroundColor: Colors.lightBlueAccent,
+        child: AnimatedIcon(
+          icon: AnimatedIcons.pause_play,
+          progress: _animatePlay,
         ),
       ),
     );
@@ -277,19 +330,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  Widget trackStart() {
-    return Container(
-      child: FloatingActionButton(
-        heroTag: "start",
-        onPressed: () {
-          _animationController.reverse();
-        },
-        tooltip: 'TrackStart',
-        backgroundColor: Colors.lightBlueAccent,
-        child: Icon(Icons.directions_walk),
-      ),
-    );
-  }
+  //Icon(Icons.directions_walk)
 
   Widget trackSave() {
     return Container(
