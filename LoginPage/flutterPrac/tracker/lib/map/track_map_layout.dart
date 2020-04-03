@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +22,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   _MyHomePageState(this.email);
+  Firestore firestore = Firestore.instance;
   String email;
   StreamSubscription _locationSubscription;
   Location _myLocation = Location();
@@ -37,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage>
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOutCirc;
   double _fabHeight = 56.0;
+  int index = 0;
 
   double getRadiansFromDegree(double degree) {
     double unitRadian = 57.3;
@@ -335,6 +339,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
+  final TextEditingController _dataIndexController = TextEditingController();
   void showAlert(BuildContext context) async {
     String result = await showDialog(
         context: context,
@@ -342,22 +347,40 @@ class _MyHomePageState extends State<MyHomePage>
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("저장하시겠습니까?"),
-            content: Text(lineList.toString()),
+            content: TextFormField(
+              controller: _dataIndexController,
+              decoration: InputDecoration(labelText: '몇번째 경로입니까?'),
+              validator: (String s) {
+                if (s.isEmpty) {
+                  return "입력해주셔야합니다.";
+                }
+                return null;
+              },
+            ),
             actions: <Widget>[
               FlatButton(
                 child: Text('네', style: TextStyle(color: Colors.black)),
                 onPressed: () {
                   Navigator.pop(context, '저장되었습니다.');
+                  firestore
+                      .collection('line_data_folder')
+                      .document(_dataIndexController.text + '번 경로')
+                      .setData({
+                    'num': _dataIndexController.text,
+                    'id': email,
+                    'line': lineList.toString()
+                  });
                 },
               ),
               FlatButton(
+                  child: Text('아니요', style: TextStyle(color: Colors.black)),
                   onPressed: () {
                     Navigator.pop(context, "취소하셨습니다.");
-                  },
-                  child: Text('아니요', style: TextStyle(color: Colors.black)))
+                  }),
             ],
           );
         });
+
     mapScaffoldKey.currentState
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(

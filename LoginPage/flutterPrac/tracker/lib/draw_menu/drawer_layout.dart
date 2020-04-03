@@ -67,7 +67,7 @@ class DrawerLayout extends StatelessWidget {
               title: Text('내 경 로'),
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LineDataShow()));
+                    MaterialPageRoute(builder: (context) => LineDataSheet()));
               },
             ),
             ListTile(
