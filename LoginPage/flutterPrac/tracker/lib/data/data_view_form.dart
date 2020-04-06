@@ -9,6 +9,24 @@ class LineDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return lineListForm(context);
+  }
+
+  deleteData(docId) {
+    Firestore.instance
+        .collection('line_data_folder')
+        .document(docId)
+        .delete()
+        .catchError((e) {
+      print(e + '가 발생했네요. deteData를 확인해주세요.');
+    });
+  }
+
+  getData(docId) {
+    Firestore.instance.collection('line_data_folder').document(docId);
+  }
+
+  Widget lineListForm(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
@@ -63,17 +81,7 @@ class LineDataForm extends StatelessWidget {
     );
   }
 
-  deleteData(docId) {
-    Firestore.instance
-        .collection('line_data_folder')
-        .document(docId)
-        .delete()
-        .catchError((e) {
-      print(e + '가 발생했네요. deteData를 확인해주세요.');
-    });
-  }
-
-  getData(docId) {
-    Firestore.instance.collection('line_data_folder').document(docId);
+  Widget cardForm(BuildContext context) {
+    return Padding();
   }
 }

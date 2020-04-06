@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/data/line_data.dart';
-import 'package:tracker/map/floating_btn_control.dart';
 
 class DrawerLayout extends StatelessWidget {
   DrawerLayout(this.email);

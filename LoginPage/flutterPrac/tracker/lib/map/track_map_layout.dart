@@ -146,8 +146,8 @@ class _MyHomePageState extends State<MyHomePage>
             polyline = Polyline(
               polylineId: PolylineId("road"),
               points: line,
-              color: Colors.deepPurpleAccent,
-              width: 10,
+              color: Colors.black,
+              width: 5,
             );
           });
         }
