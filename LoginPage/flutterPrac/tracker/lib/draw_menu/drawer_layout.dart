@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/data/line_data.dart';
+import 'package:tracker/settings/settings_layout.dart';
+import 'package:tracker/settings/user_layout.dart';
 
 class DrawerLayout extends StatelessWidget {
   DrawerLayout(this.email);
@@ -59,7 +61,10 @@ class DrawerLayout extends StatelessWidget {
             ListTile(
               title: Text('사 용 자 정 보'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserSettingsLayout()));
               },
             ),
             ListTile(
@@ -72,7 +77,8 @@ class DrawerLayout extends StatelessWidget {
             ListTile(
               title: Text('환경 설정'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SettingsLayout()));
               },
             )
           ],

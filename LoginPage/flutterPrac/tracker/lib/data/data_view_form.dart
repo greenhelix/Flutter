@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/data/data_detail.dart';
 
 class LineDataForm extends StatelessWidget {
   LineDataForm(this.dataSnapshot);
@@ -45,6 +46,10 @@ class LineDataForm extends StatelessWidget {
               Text(dataSnapshot.data['line']),
             ],
           ),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => DataDetailLayout()));
+          },
           onLongPress: () {
             showDialog<void>(
                 context: context,
