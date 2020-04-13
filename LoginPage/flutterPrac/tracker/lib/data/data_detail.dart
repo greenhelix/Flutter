@@ -9,32 +9,78 @@ class DataDetailLayout extends StatefulWidget {
 class _DataDetailLayoutState extends State<DataDetailLayout> {
   @override
   Widget build(BuildContext context) {
-    final Size background = MediaQuery.of(context).size;
+    final Size backgroundSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text('세부설정 화면'),
+        backgroundColor: Colors.transparent,
+        actions: <Widget>[_detailControlPopup()],
       ),
       body: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  //저장시 입력되는 값들, 필드값이 들어오게 하는 부분
-                  // 사진 등록 가능하게
-                  // 경로이름
-                  // 날짜
-                  // 거리
-                  // 수단
-                ],
-              )
-            ],
-          )
+          _dataInputForm(backgroundSize),
         ],
       ),
     );
   }
+}
+
+//상단 팝업 메뉴 리스트
+Widget _detailControlPopup() => PopupMenuButton<int>(
+    itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 1,
+            child: Text(
+              '저장',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          PopupMenuItem(
+            value: 2,
+            child: Text(
+              '공유하기',
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+          PopupMenuItem(
+            value: 3,
+            child: Text(
+              '삭제',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ]);
+
+Widget _dataInputForm(Size size) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      Stack(
+        children: <Widget>[
+          //사진
+          Container(),
+          //경로이름
+          Container(),
+          //날짜
+          Container(),
+          //거리
+          Container(),
+          //수단
+          Container(),
+        ],
+      ),
+      //공간
+      SizedBox(),
+      //지도
+      Container(),
+      //공간
+      SizedBox(),
+      //버튼
+      RaisedButton(
+        onPressed: () {},
+        child: Text('경로에 사진 추가하기'),
+      )
+    ],
+  );
 }
