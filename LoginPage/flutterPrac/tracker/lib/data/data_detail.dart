@@ -75,9 +75,15 @@ class _DataDetailLayoutState extends State<DataDetailLayout> {
                         ),
                       )),
                 ),
-                RaisedButton(child: _firstRouteImage(screenSize, _image), onPressed: (){
-                  getImage(ImageSource.gallery);
-                },)
+                Positioned(
+                    left: screenSize.width * 0.3,
+                    right: screenSize.width * 0.3,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: () {
+                          getImage(ImageSource.gallery);
+                        },
+                        child: _firstRouteImage(screenSize, _image)))
               ],
             )
           ],
@@ -122,20 +128,17 @@ Widget _detailControlPopup() => PopupMenuButton<int>(
         ]);
 //메인 첫 사진 추가 공간
 Widget _firstRouteImage(Size size, File check) {
-  return Positioned(
-    left: size.width * 0.3,
-    right: size.width * 0.3,
-    top: 0,
-    child: Container(
-      margin: const EdgeInsets.all(10),
-      width: 100,
-      height: 100,
-      child: (check != null)
-          ? Image.file(check)
-          : FittedBox(
-              fit: BoxFit.contain,
-              child: new Icon(Icons.add_photo_alternate),
-            ),
-    ),
+  return Container(
+    margin: const EdgeInsets.all(10),
+    width: 100,
+    height: 100,
+    child: (check != null)
+        ? Image.file(check)
+        : FittedBox(
+            fit: BoxFit.contain,
+            child: new Icon(Icons.add_photo_alternate),
+          ),
   );
-};
+}
+
+//child:
