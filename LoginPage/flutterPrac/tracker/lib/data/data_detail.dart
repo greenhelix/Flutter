@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DataDetailLayout extends StatefulWidget {
@@ -25,22 +25,27 @@ class _DataDetailLayoutState extends State<DataDetailLayout> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            //상세내용 입력부분
             Stack(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(screenSize.width * 0.1),
+                  padding: EdgeInsets.only(
+                      left: screenSize.width * 0.09,
+                      right: screenSize.width * 0.09,
+                      top: screenSize.height * 0.1,
+                      bottom: screenSize.height * 0.01),
                   child: Card(
                       elevation: 8.0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0)),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            top: 40, left: 12, right: 12, bottom: 30),
+                            top: 20, left: 12, right: 12, bottom: 30),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Container(
-                              height: screenSize.height * 0.02,
+                              height: screenSize.height * 0.01,
                             ),
                             TextField(
                               decoration: InputDecoration(labelText: '경로이름'),
@@ -76,16 +81,35 @@ class _DataDetailLayoutState extends State<DataDetailLayout> {
                       )),
                 ),
                 Positioned(
-                    left: screenSize.width * 0.3,
-                    right: screenSize.width * 0.3,
+                    left: screenSize.width * 0.35,
+                    right: screenSize.width * 0.35,
                     top: 0,
                     child: GestureDetector(
                         onTap: () {
                           getImage(ImageSource.gallery);
                         },
-                        child: _firstRouteImage(screenSize, _image)))
+                        child: _firstRouteImage(screenSize, _image))),
               ],
-            )
+            ),
+            //경로 지도
+            SizedBox(
+              width: screenSize.width * 0.9,
+              height: screenSize.height * 0.3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                      target: LatLng(37.65788522718552, 127.12529190283237),
+                      zoom: 10.0),
+                  mapType: MapType.normal,
+                ),
+              ),
+            ),
+//            SizedBox(
+//              height: 10,
+//            ),
+            // 경로사진 추가 버튼
+            RaisedButton(child: Text('상세 사진 추가'), onPressed: () {}),
           ],
         ),
       ),
@@ -133,12 +157,13 @@ Widget _firstRouteImage(Size size, File check) {
     width: 100,
     height: 100,
     child: (check != null)
-        ? Image.file(check)
+        ? FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Image.file(check),
+          )
         : FittedBox(
             fit: BoxFit.contain,
             child: new Icon(Icons.add_photo_alternate),
           ),
   );
 }
-
-//child:

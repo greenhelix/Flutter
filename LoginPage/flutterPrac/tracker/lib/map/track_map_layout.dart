@@ -240,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100))
           ..addListener(() {
             setState(() {});
           });
@@ -262,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   menuAnimate() {
-    if (menuOpen == true) {
+    if (menuOpen == false) {
       print("menu open");
       _animationController.forward();
     } else {
