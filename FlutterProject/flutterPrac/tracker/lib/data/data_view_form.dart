@@ -19,7 +19,7 @@ class LineDataForm extends StatelessWidget {
         .document(docId)
         .delete()
         .catchError((e) {
-      print(e + '가 발생했네요. deteData를 확인해주세요.');
+      print(e + '가 발생했네요. deleteData()를 확인해주세요.');
     });
   }
 
