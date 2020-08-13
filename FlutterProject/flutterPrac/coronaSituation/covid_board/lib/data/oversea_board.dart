@@ -2,9 +2,8 @@ import 'package:http/http.dart'as http ;
 import 'dart:async';
 
 Future<List<Oversea>> fetchPhotos(http.Client client) async {
-    final response = await client.get('http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson')
-  return
-}
+    final response = await client.get('http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson');
+  return client;}
 
 class Oversea {
     final int result_code;
