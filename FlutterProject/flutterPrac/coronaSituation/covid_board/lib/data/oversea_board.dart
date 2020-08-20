@@ -1,19 +1,32 @@
-import 'package:http/http.dart'as http ;
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:async';
 
-Future<List<Oversea>> fetchPhotos(http.Client client) async {
-    final response = await client.get('http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson');
-  return client;}
-
-class Oversea {
-    final int result_code;
-    final String area_nm;
-    final String nation_nm;
-    final int nat_def_cnt;
-    final int nat_death_cnt;
-    final int nat_death_rate;
-    final int update_dt;
-
-    Oversea(this.update_dt, {this.result_code, this.area_nm, this.nation_nm, this.nat_def_cnt, this.nat_death_cnt, this.nat_death_rate});
-
+class JSONGet extends StatefulWidget {
+  @override
+  _JSONGetState createState() => _JSONGetState();
 }
+
+class _JSONGetState extends State<JSONGet> {
+  Future<String> getData() async {
+    http.Response response = await http.get(Uri.encodeFull(
+        'http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?serviceKey=0XPqoJ92f%2BHITCSMY9zKbbfucy007IN5LgUDC2rMQJ1D09M0kFru1jIeHxNygEHXo4QnPlEgdgjrMmTpGzhOkA%3D%3D'));
+    print(response.body);
+    List data = jsonDecode(response.body);
+    print("***");
+    print(data[1]['title']);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: new Center(
+        child: new RaisedButton(child: new Text("GET"), onPressed: getData),
+      ),
+    );
+  }
+}
+
+//http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?serviceKey=인증키(URL Encode)&pageNo=1&numOfRows=10&startCreateDt=20200310&endCreateDt=20200315
