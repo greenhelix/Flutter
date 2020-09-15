@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "836559914997-r4o6bv6bv3dlq1dosatm9ikdt6d928gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greenhelix.loginpage",
+            "certificate_hash": "63f13de46b9c324859f60c87d799d7c4172534a0"
+          }
+        },
+        {
           "client_id": "836559914997-qskpp83tnqi9tnlnrernt5t28tk51frn.apps.googleusercontent.com",
           "client_type": 3
         }

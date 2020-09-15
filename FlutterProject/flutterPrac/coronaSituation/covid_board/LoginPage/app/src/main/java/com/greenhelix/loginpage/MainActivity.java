@@ -28,7 +28,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class MainActivity extends AppCompatActivity {
     private SignInButton signInButton;
     private GoogleSignInClient mGoogleSignInClient;
-    private String TAG  = "MainActivity";
+    private String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private Button btnSignOut;
     private int RC_SIGN_IN = 1;
@@ -42,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         btnSignOut = findViewById(R.id.sign_out_button);
 
+        // 이부분 약간 확인 필요 R.string.app_name 이 아닐수도 있음
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.app_name ))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
