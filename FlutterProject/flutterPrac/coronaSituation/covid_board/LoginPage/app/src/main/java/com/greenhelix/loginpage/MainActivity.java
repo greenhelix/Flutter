@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // 이부분 약간 확인 필요 R.string.app_name 이 아닐수도 있음
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void FirebaseGoolgleAuth(GoogleSignInAccount acct){
+    private void FirebaseGoogleAuth(GoogleSignInAccount acct){
         AuthCredential authCredential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
