@@ -23,6 +23,7 @@ class _RootAppState extends State<RootApp> {
   }
 
   Widget getBody() {
+    // 네비게이션을 움직이게 만드는 위젯 indexed stack
     return IndexedStack(
       index: activeTab,
       children: const [
