@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int activeMenu1 = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,10 +25,10 @@ class _HomePageState extends State<HomePage> {
   PreferredSizeWidget getAppBar() {
     return AppBar(
       backgroundColor: black,
-      elevation: 0,
       title: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),
         child: Row(
+          // children 에 들어있는 것끼리의 간격 배치를 설정해줄 수 있다.
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
             Text(
@@ -58,16 +59,30 @@ class _HomePageState extends State<HomePage> {
                       children: List.generate(songType_1.length, (index) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 25),
-                      child: Column(
-                        children: [
-                          Text(
-                            songType_1[index],
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: grey,
-                                fontWeight: FontWeight.w600),
-                          )
-                        ],
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            activeMenu1 = index;
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              songType_1[index],
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: activeMenu1 == index ? primary : grey,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              height: 3,
+                            ),
+                            Container(
+                              width: 10,
+                              height: 3,
+                            )
+                          ],
+                        ),
                       ),
                     );
                   })),
