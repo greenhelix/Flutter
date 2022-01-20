@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_spotify_clone/pages/home_page.dart';
 import 'package:flutter_spotify_clone/theme/colors.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -17,6 +18,44 @@ class _RootAppState extends State<RootApp> {
       // 배경을 검정, 하단 네비게이션 추가
       backgroundColor: black,
       bottomNavigationBar: getFooter(),
+      body: getBody(),
+    );
+  }
+
+  Widget getBody() {
+    return IndexedStack(
+      index: activeTab,
+      children: const [
+        HomePage(),
+        Center(
+          child: Text(
+            "Home",
+            style: TextStyle(
+                fontSize: 20, color: white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Center(
+          child: Text(
+            "Library",
+            style: TextStyle(
+                fontSize: 20, color: white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Center(
+          child: Text(
+            "Search",
+            style: TextStyle(
+                fontSize: 20, color: white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Center(
+          child: Text(
+            "Setting",
+            style: TextStyle(
+                fontSize: 20, color: white, fontWeight: FontWeight.bold),
+          ),
+        )
+      ],
     );
   }
 
