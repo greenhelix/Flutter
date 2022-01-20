@@ -51,13 +51,16 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 음악 카테고리 부분
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 30, top: 20),
                   child: Row(
+                      // list 의 값 인덱스대로 뿌려준다.
                       children: List.generate(songType_1.length, (index) {
                     return Padding(
+                      // 음악 카테고리 사이의 간격
                       padding: const EdgeInsets.only(right: 25),
                       child: GestureDetector(
                         onTap: () {
@@ -77,10 +80,16 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               height: 3,
                             ),
-                            Container(
-                              width: 10,
-                              height: 3,
-                            )
+                            // 하단 밑줄 표기 되게 하기
+                            activeMenu1 == index
+                                ? Container(
+                                    width: 25,
+                                    height: 3,
+                                    decoration: BoxDecoration(
+                                        color: primary,
+                                        borderRadius: BorderRadius.circular(5)),
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -88,6 +97,60 @@ class _HomePageState extends State<HomePage> {
                   })),
                 ),
               ),
+              SizedBox(
+                height: 20,
+              ),
+              // 앨범사진 부분
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Row(
+                    children: List.generate(songs.length - 5, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 30),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 180,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage(songs[index]['img']),
+                                        fit: BoxFit.cover),
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                songs[index]['title'],
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: white,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                songs[index]['description'],
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: grey,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              )
             ],
           )
         ],
