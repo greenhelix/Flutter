@@ -50,20 +50,29 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                  children: List.generate(songType_1.length, (index) {
-                return Column(
-                  children: [
-                    Text(
-                      songType_1[index],
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: grey,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
-                );
-              })),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30, top: 20),
+                  child: Row(
+                      children: List.generate(songType_1.length, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: Column(
+                        children: [
+                          Text(
+                            songType_1[index],
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: grey,
+                                fontWeight: FontWeight.w600),
+                          )
+                        ],
+                      ),
+                    );
+                  })),
+                ),
+              ),
             ],
           )
         ],
