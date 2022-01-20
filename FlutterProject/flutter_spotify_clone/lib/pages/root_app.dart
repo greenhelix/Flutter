@@ -65,7 +65,7 @@ class _RootAppState extends State<RootApp> {
 
     return Container(
       // 하단 네비게이션의 높이 설정
-      height: 80,
+      height: 60,
       // 하단 네비게이션의 색상 설정
       decoration: BoxDecoration(color: CupertinoColors.black),
       // 하단 네비게이션의 구성 갯수와 아이콘 등의 조합 설정

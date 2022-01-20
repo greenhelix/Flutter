@@ -19,7 +19,7 @@ const List songType_2 = [
 const List songs = [
   {
     "img": "assets/images/img_3.jpg",
-    "title": "Feeling' Good",
+    "title": "Feeling Good",
     "description": "Feel good with this positively timeless playlist!",
     "song_count": "100 songs",
     "date": "about 19 hr",
