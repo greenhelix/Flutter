@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AlbumPage extends StatefulWidget {
-  const AlbumPage({Key? key}) : super(key: key);
+  final dynamic song;
+
+  const AlbumPage({Key? key, this.song}) : super(key: key);
 
   @override
   _AlbumPageState createState() => _AlbumPageState();

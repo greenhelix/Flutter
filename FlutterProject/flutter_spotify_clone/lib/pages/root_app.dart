@@ -29,13 +29,6 @@ class _RootAppState extends State<RootApp> {
         HomePage(),
         Center(
           child: Text(
-            "Home",
-            style: TextStyle(
-                fontSize: 20, color: white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Center(
-          child: Text(
             "Library",
             style: TextStyle(
                 fontSize: 20, color: white, fontWeight: FontWeight.bold),
@@ -67,7 +60,7 @@ class _RootAppState extends State<RootApp> {
       // 하단 네비게이션의 높이 설정
       height: 60,
       // 하단 네비게이션의 색상 설정
-      decoration: BoxDecoration(color: CupertinoColors.black),
+      decoration: BoxDecoration(color: black),
       // 하단 네비게이션의 구성 갯수와 아이콘 등의 조합 설정
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20),
